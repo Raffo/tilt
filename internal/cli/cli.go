@@ -41,6 +41,7 @@ func Execute() {
 	}
 
 	addCommand(rootCmd, &upCmd{})
+	addCommand(rootCmd, &ciCmd{})
 	addCommand(rootCmd, &dockerCmd{})
 	addCommand(rootCmd, &doctorCmd{})
 	addCommand(rootCmd, newDownCmd())
