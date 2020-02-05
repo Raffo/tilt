@@ -96,6 +96,7 @@ func (u Upper) Start(
 	analyticsUserOpt analytics.Opt,
 	token token.Token,
 	cloudAddress string,
+	isCIMode bool,
 ) error {
 
 	span, ctx := opentracing.StartSpanFromContext(ctx, "Start")
