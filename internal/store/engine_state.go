@@ -93,6 +93,10 @@ type EngineState struct {
 	TelemetrySettings model.TelemetrySettings
 
 	UserConfigState model.UserConfigState
+
+	IsCIMode       bool
+	CIModeStopped  bool
+	CIModeExitCode bool
 }
 
 // Merge analytics opt-in status from different sources.

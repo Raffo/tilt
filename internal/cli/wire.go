@@ -75,6 +75,7 @@ var BaseWireSet = wire.NewSet(
 	local.ProvideExecer,
 	local.NewController,
 	k8swatch.NewPodWatcher,
+	k8swatch.NewJobWatcher,
 	k8swatch.NewServiceWatcher,
 	k8swatch.NewEventWatchManager,
 	configs.NewConfigsController,
