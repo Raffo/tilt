@@ -58,7 +58,7 @@ func (c *ciCmd) run(ctx context.Context, args []string) error {
 
 	g.Go(func() error {
 		defer cancel()
-		return upper.Start(ctx, args, threads.tiltBuild, false, c.fileName, false, a.UserOpt(), threads.token, string(threads.cloudAddress))
+		return upper.Start(ctx, args, threads.tiltBuild, false, c.fileName, false, a.UserOpt(), threads.token, string(threads.cloudAddress), true)
 	})
 
 	err = g.Wait()

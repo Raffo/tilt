@@ -149,7 +149,7 @@ func (c *upCmd) run(ctx context.Context, args []string) error {
 
 	g.Go(func() error {
 		defer cancel()
-		return upper.Start(ctx, args, threads.tiltBuild, c.watch, c.fileName, hudEnabled, a.UserOpt(), threads.token, string(threads.cloudAddress))
+		return upper.Start(ctx, args, threads.tiltBuild, c.watch, c.fileName, hudEnabled, a.UserOpt(), threads.token, string(threads.cloudAddress), false)
 	})
 
 	err = g.Wait()
