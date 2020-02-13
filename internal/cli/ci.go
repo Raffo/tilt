@@ -64,9 +64,6 @@ func (c *ciCmd) run(ctx context.Context, args []string) error {
 	err = g.Wait()
 	if err != context.Canceled {
 		return err
-	} else {
-		return nil
 	}
-
 	return nil
 }
