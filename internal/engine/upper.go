@@ -122,6 +122,7 @@ func (u Upper) Start(
 		Token:            token,
 		CloudAddress:     cloudAddress,
 		HUDEnabled:       hudEnabled,
+		IsCIMode:         isCIMode,
 	})
 }
 
@@ -634,6 +635,7 @@ func handleInitAction(ctx context.Context, engineState *store.EngineState, actio
 	engineState.CloudAddress = action.CloudAddress
 	engineState.Token = action.Token
 	engineState.HUDEnabled = action.HUDEnabled
+	engineState.IsCIMode = action.IsCIMode
 
 	// NOTE(dmiller): this kicks off a Tiltfile build
 	engineState.PendingConfigFileChanges[action.TiltfilePath] = time.Now()

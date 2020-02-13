@@ -12,6 +12,7 @@ import (
 	"github.com/opentracing/opentracing-go"
 	"github.com/pkg/browser"
 	"github.com/pkg/errors"
+	batchv1 "k8s.io/api/batch/v1"
 	v1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/meta"
@@ -94,6 +95,8 @@ type Client interface {
 	WatchPods(ctx context.Context, lps labels.Selector) (<-chan ObjectUpdate, error)
 
 	WatchServices(ctx context.Context, lps labels.Selector) (<-chan *v1.Service, error)
+
+	WatchJobs(ctx context.Context, lps labels.Selector) (<-chan *batchv1.Job, error)
 
 	WatchEvents(ctx context.Context) (<-chan *v1.Event, error)
 

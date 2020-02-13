@@ -8,6 +8,7 @@ import (
 	"github.com/docker/distribution/reference"
 	"github.com/pkg/errors"
 	v1 "k8s.io/api/core/v1"
+	batchv1 "k8s.io/api/batch/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/watch"
 
@@ -62,6 +63,10 @@ func (ec *explodingClient) WatchPods(ctx context.Context, lps labels.Selector) (
 }
 
 func (ec *explodingClient) WatchServices(ctx context.Context, lps labels.Selector) (<-chan *v1.Service, error) {
+	return nil, errors.Wrap(ec.err, "could not set up k8s client")
+}
+
+func (ec *explodingClient) WatchJobs(ctx context.Context, lps labels.Selector) (<-chan *batchv1.Job, error) {
 	return nil, errors.Wrap(ec.err, "could not set up k8s client")
 }
 

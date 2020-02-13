@@ -40,6 +40,7 @@ func ProvideSubscribers(
 	tc *telemetry.Controller,
 	lc *local.Controller,
 	podm *k8srollout.PodMonitor,
+	jw *k8swatch.JobWatcher,
 ) []store.Subscriber {
 	return []store.Subscriber{
 		hud,
@@ -65,5 +66,6 @@ func ProvideSubscribers(
 		tc,
 		lc,
 		podm,
+		jw,
 	}
 }

@@ -96,7 +96,7 @@ type EngineState struct {
 
 	IsCIMode       bool
 	CIModeStopped  bool
-	CIModeExitCode bool
+	CIModeExitCode int
 }
 
 // Merge analytics opt-in status from different sources.

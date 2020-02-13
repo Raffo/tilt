@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
+	batchv1 "k8s.io/api/batch/v1"
 	v1 "k8s.io/api/core/v1"
 	apiErrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -244,6 +245,34 @@ func (kCli K8sClient) WatchServices(ctx context.Context, ls labels.Selector) (<-
 	})
 
 	go runInformer(ctx, "services", informer)
+
+	return ch, nil
+}
+
+func (kCli K8sClient) WatchJobs(ctx context.Context, ls labels.Selector) (<-chan *batchv1.Job, error) {
+	gvr := ServiceGVR
+	informer, err := kCli.makeInformer(ctx, gvr, ls)
+	if err != nil {
+		return nil, errors.Wrap(err, "WatchJobs")
+	}
+
+	ch := make(chan *batchv1.Job)
+	informer.AddEventHandler(cache.ResourceEventHandlerFuncs{
+		AddFunc: func(obj interface{}) {
+			mObj, ok := obj.(*batchv1.Job)
+			if ok {
+				ch <- mObj
+			}
+		},
+		UpdateFunc: func(oldObj interface{}, newObj interface{}) {
+			newService, ok := newObj.(*batchv1.Job)
+			if ok {
+				ch <- newService
+			}
+		},
+	})
+
+	go runInformer(ctx, "jobs", informer)
 
 	return ch, nil
 }

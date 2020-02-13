@@ -11,6 +11,7 @@ import (
 	"github.com/docker/distribution/reference"
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
+	batchv1 "k8s.io/api/batch/v1"
 	v1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/labels"
@@ -54,6 +55,9 @@ type FakeK8sClient struct {
 	serviceWatcherMu sync.Mutex
 	serviceWatches   []fakeServiceWatch
 
+	jobWatcherMu sync.Mutex
+	jobWatches   []fakeJobWatch
+
 	eventsCh       chan *v1.Event
 	EventsWatchErr error
 
@@ -88,6 +92,11 @@ type fakePodWatch struct {
 	ch chan ObjectUpdate
 }
 
+type fakeJobWatch struct {
+	ls labels.Selector
+	ch chan *batchv1.Job
+}
+
 func (c *FakeK8sClient) EmitService(ls labels.Selector, s *v1.Service) {
 	c.podWatcherMu.Lock()
 	defer c.podWatcherMu.Unlock()
@@ -116,6 +125,28 @@ func (c *FakeK8sClient) WatchServices(ctx context.Context, ls labels.Selector) (
 		}
 		c.serviceWatches = newWatches
 		c.serviceWatcherMu.Unlock()
+	}()
+	return ch, nil
+}
+
+func (c *FakeK8sClient) WatchJobs(ctx context.Context, ls labels.Selector) (<-chan *batchv1.Job, error) {
+	c.serviceWatcherMu.Lock()
+	ch := make(chan *batchv1.Job, 20)
+	c.jobWatches = append(c.jobWatches, fakeJobWatch{ls, ch})
+	c.jobWatcherMu.Unlock()
+
+	go func() {
+		// when ctx is canceled, remove the label selector from the list of watched label selectors
+		<-ctx.Done()
+		c.jobWatcherMu.Lock()
+		var newWatches []fakeJobWatch
+		for _, e := range c.jobWatches {
+			if !SelectorEqual(e.ls, ls) {
+				newWatches = append(newWatches, e)
+			}
+		}
+		c.jobWatches = newWatches
+		c.jobWatcherMu.Unlock()
 	}()
 	return ch, nil
 }
