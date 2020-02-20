@@ -2,6 +2,7 @@ package store
 
 import (
 	"context"
+	"fmt"
 	"sync"
 	"time"
 
@@ -188,6 +189,13 @@ func (s *Store) maybeFinished() (bool, error) {
 
 	if state.FatalError != nil && !state.HUDEnabled {
 		return true, state.FatalError
+	}
+
+	if state.IsCIMode && state.CIModeStopped {
+		if state.CIModeExitCode != 0 {
+			return true, fmt.Errorf("CI mode exited with status: %d\n", state.CIModeExitCode)
+		}
+		return true, nil
 	}
 
 	if len(state.ManifestTargets) == 0 {
